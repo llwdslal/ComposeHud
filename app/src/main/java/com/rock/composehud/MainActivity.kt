@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,8 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(){
+    val appState = rememberAppState(coroutineScope = rememberCoroutineScope())
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -45,8 +48,15 @@ fun App(){
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
-                Icon(imageVector = Icons.Default.Send, contentDescription = "")
+            Column() {
+                Button(onClick = {
+                    appState.dispatchAction(AppAction.MessageAction("Show Message"))
+                }) {
+                    Text(text = "Show Message")
+                }
+                Button(onClick = {  }) {
+                    Text(text = "Show Message2")
+                }
             }
         }
 
