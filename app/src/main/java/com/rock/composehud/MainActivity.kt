@@ -8,10 +8,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rock.composehud.ui.theme.ComposeHudTheme
@@ -25,13 +26,18 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(){
-    val appState = rememberAppState(coroutineScope = rememberCoroutineScope())
 
+    val appState = rememberAppState(context = LocalContext.current,coroutineScope = rememberCoroutineScope())
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -50,17 +56,27 @@ fun App(){
         floatingActionButton = {
             Column() {
                 Button(onClick = {
-                    appState.dispatchAction(AppAction.MessageAction("Show Message"))
+                    appState.dispatchAction(AppAction.ToastMessage("ToastMessage"))
                 }) {
-                    Text(text = "Show Message")
+                    Text(text = "ToastMessage")
                 }
-                Button(onClick = {  }) {
-                    Text(text = "Show Message2")
+
+                Button(onClick = {
+                    appState.dispatchAction(AppAction.ShowLoading)
+                }) {
+                    Text(text = "ShowLoading")
+                }
+
+                Button(onClick = {
+                    appState.dispatchAction(AppAction.Dismiss)
+                }) {
+                    Text(text = "Dismiss")
                 }
             }
         }
 
     ) {
+
         LazyColumn(
             modifier = Modifier.padding(it),
             contentPadding = PaddingValues(4.dp),
@@ -77,6 +93,7 @@ fun App(){
            }
         }
     }
+
 }
 
 @Preview
