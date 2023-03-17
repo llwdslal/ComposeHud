@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 
 private const val TAG = "HudComposables"
 @Composable
-internal fun LoadingHud(visible: Boolean ) {
+internal fun LoadingHud(visible: Boolean ) { //想实现显示/隐藏动画，没成功 T_T
     val bgColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
 
     val infiniteTransition = rememberInfiniteTransition()

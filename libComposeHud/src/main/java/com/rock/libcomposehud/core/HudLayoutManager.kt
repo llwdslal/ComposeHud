@@ -21,13 +21,6 @@ internal object HudLayoutManager {
     private val layouts = mutableListOf<LayoutWrapper>()
     private var currentLayout: HudLayout? = null
 
-    /**
-     *
-     * @param isFocusable Boolean true touch 事件不会传递到下一层
-     * @param gravity Int
-     * @param offset IntOffset
-     * @param content
-     */
     fun show(
         isFocusable: Boolean = true,
         @GravityInt gravity: Int = Gravity.CENTER,
