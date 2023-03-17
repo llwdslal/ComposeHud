@@ -4,17 +4,17 @@ import android.view.Gravity
 import android.widget.Toast
 import androidx.annotation.GravityInt
 import androidx.annotation.IntRange
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.unit.IntOffset
 import com.rock.libcomposehud.core.HudLayoutManager
 
 
 object HUD {
 
-    fun showLoading() {
-        popup {
-            LoadingHud()
+    fun showLoading(modal:Boolean = true) {
+        popup(isFocusable = modal) {
+            LoadingHud(it.value)
         }
     }
 
@@ -32,7 +32,7 @@ object HUD {
         isFocusable: Boolean = true,
         @GravityInt gravity: Int = Gravity.CENTER,
         offset: IntOffset = IntOffset.Zero,
-        content: @Composable () -> Unit
+        content: @Composable (State<Boolean>) -> Unit
     ) {
         HudLayoutManager.show(isFocusable, gravity, offset, content)
     }
@@ -41,7 +41,7 @@ object HUD {
         @GravityInt gravity: Int = Gravity.CENTER,
         offset: IntOffset = IntOffset.Zero,
         @IntRange(0, 1) duration: Int = Toast.LENGTH_SHORT,
-        content: @Composable () -> Unit,
+        content: @Composable (State<Boolean>) -> Unit,
 
     ) {
         HudLayoutManager.toast(gravity,offset,duration,content)

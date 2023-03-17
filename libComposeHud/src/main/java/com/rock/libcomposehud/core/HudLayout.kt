@@ -21,12 +21,12 @@ import java.util.UUID
 private const val TAG = "HudLayout"
 
 
-interface HudLayout{
+interface HudLayout {
     val composeViewWindowToken: IBinder
+    val isShowing: State<Boolean>
 
-    fun setContent(content: @Composable () -> Unit,parent: CompositionContext? = null)
+    fun setContent(parent: CompositionContext? = null, content: @Composable () -> Unit)
 
-    fun isShowing(): Boolean
     fun show()
     fun dismiss()
     fun dispose()
@@ -38,26 +38,28 @@ interface HudLayout{
 }
 
 
-internal class HudLayoutImpl (
+internal class HudLayoutImpl(
     composeView: View,
-    layoutId:UUID,
-    ):AbstractComposeView(composeView.context),HudLayout{
+    layoutId: UUID,
+) : AbstractComposeView(composeView.context), HudLayout {
 
     override val composeViewWindowToken: IBinder = composeView.applicationWindowToken
 
     init {
-        ViewTreeLifecycleOwner.set(this,ViewTreeLifecycleOwner.get(composeView))
+        ViewTreeLifecycleOwner.set(this, ViewTreeLifecycleOwner.get(composeView))
         ViewTreeViewModelStoreOwner.set(this, ViewTreeViewModelStoreOwner.get(composeView))
         setViewTreeSavedStateRegistryOwner(composeView.findViewTreeSavedStateRegistryOwner())
-        setTag(R.id.compose_view_saveable_id_tag,"HudLayout:$layoutId")
-        Log.e(TAG, "init: $composeViewWindowToken")
+        setTag(R.id.compose_view_saveable_id_tag, "HudLayout:$layoutId")
     }
 
 
+    private var _showing = mutableStateOf(false)
 
-    private var _showing = false
+    override val isShowing: State<Boolean>
+        get() = _showing
 
-    private val windowManager = composeView.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    private val windowManager =
+        composeView.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
     private var windowParams = createLayoutParams()
 
@@ -71,47 +73,46 @@ internal class HudLayoutImpl (
         content()
     }
 
-    override fun setContent(content: @Composable () -> Unit,parent: CompositionContext?) {
+    override fun setContent(parent: CompositionContext?, content: @Composable () -> Unit) {
 
         parent?.let {
             setParentCompositionContext(it)
         }
 
-        this.content = content
         shouldCreateCompositionOnAttachedToWindow = true
-        if (isAttachedToWindow){
+
+        this.content = content
+
+        if (isAttachedToWindow) {
             createComposition()
         }
     }
 
-    override fun isShowing() = _showing
-
     override fun show() {
-        if (_showing){
+        if (_showing.value) {
             dismiss()
         }
+        _showing.value = true
         windowManager.addView(this, windowParams)
-        _showing = true
-        Log.e(TAG, "show: $composeViewWindowToken", )
+
     }
 
     override fun dismiss() {
-        if (!_showing) return
+        if (!_showing.value) return
+        _showing.value = false
         disposeComposition()
         windowManager.removeViewImmediate(this)
-        _showing = false
-        Log.e(TAG, "dismiss: $composeViewWindowToken", )
     }
 
-    override fun dispose(){
+    override fun dispose() {
         disposeComposition()
         ViewTreeLifecycleOwner.set(this, null)
         ViewTreeViewModelStoreOwner.set(this, null)
         setViewTreeSavedStateRegistryOwner(null)
-        if (_showing){
+        if (_showing.value) {
             windowManager.removeViewImmediate(this)
         }
-        Log.e(TAG, "dispose: $composeViewWindowToken", )
+        Log.e(TAG, "dispose: $composeViewWindowToken")
     }
 
     override fun resetLayoutParams() {
@@ -147,6 +148,7 @@ internal class HudLayoutImpl (
         windowParams.x = offset.x
         windowParams.y = offset.y
     }
+
 }
 
 

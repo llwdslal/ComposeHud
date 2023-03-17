@@ -1,13 +1,9 @@
 package com.rock.libcomposehud
 
-
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -16,20 +12,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 private const val TAG = "HudComposables"
 @Composable
-internal fun LoadingHud() {
+internal fun LoadingHud(visible: Boolean ) {
     val bgColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
 
-    val transition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition()
 
-    val rotate by transition.animateFloat(
+    val rotate by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
@@ -40,8 +34,7 @@ internal fun LoadingHud() {
 
     Surface(
         color = bgColor,
-        shape = RoundedCornerShape(4.dp)
-
+        shape = RoundedCornerShape(4.dp),
     ) {
         Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Image(
@@ -55,7 +48,6 @@ internal fun LoadingHud() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun ToastHud(msg:String){
     val bgColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)

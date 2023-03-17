@@ -14,30 +14,24 @@ sealed class AppAction{
     object ShowLoading:AppAction()
     object Dismiss:AppAction()
 
-    class TransActivityAction(val clazz: Class<out Activity>):AppAction()
 }
 
 @Composable
-fun rememberAppState(context: Context,coroutineScope: CoroutineScope) = remember {
-    AppState(context)
+fun rememberAppState() = remember {
+    AppState()
 }
 
-class AppState(
-    private val context:Context,
-){
+class AppState(){
     fun dispatchAction(action: AppAction){
         when (action) {
             is AppAction.ToastMessage -> {
                 HUD.toastMessage(action.message, Toast.LENGTH_LONG)
             }
             is AppAction.ShowLoading ->{
-                HUD.showLoading()
+                HUD.showLoading(modal = false)
             }
             is AppAction.Dismiss -> {
                 HUD.dismiss()
-            }
-            is AppAction.TransActivityAction ->{
-                context.startActivity(Intent(context,action.clazz))
             }
         }
     }

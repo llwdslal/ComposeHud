@@ -5,8 +5,6 @@ import android.view.View
 import androidx.annotation.GravityInt
 import androidx.annotation.IntRange
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -34,13 +32,15 @@ internal object HudLayoutManager {
         isFocusable: Boolean = true,
         @GravityInt gravity: Int = Gravity.CENTER,
         offset: IntOffset = IntOffset.Zero,
-        content: @Composable () -> Unit
+        content: @Composable (State<Boolean>) -> Unit
     ) {
         currentLayout?.let {
-            if (it.isShowing()) {
+            if (it.isShowing.value) {
                 it.dismiss()
             }
-            it.setContent(content)
+            it.setContent{
+                content(it.isShowing)
+            }
             it.resetLayoutParams()
             it.setIsFocusable(isFocusable)
             it.setLayoutGravity(gravity)
@@ -53,7 +53,7 @@ internal object HudLayoutManager {
         @GravityInt gravity: Int = Gravity.CENTER,
         offset: IntOffset = IntOffset.Zero,
         @IntRange(0, 1) duration: Int = 0,
-        content: @Composable () -> Unit
+        content: @Composable (State<Boolean>) -> Unit
     ) {
         show(false,gravity,offset,content)
         (currentLayout as LayoutWrapper?)?.let {

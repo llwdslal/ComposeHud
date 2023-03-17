@@ -11,8 +11,8 @@ internal class LayoutWrapper(
     val coroutineScope: CoroutineScope,
 ) : RememberObserver,HudLayout by layout{
 
-    override fun setContent(content: @Composable () -> Unit, parent: CompositionContext?) {
-        layout.setContent(content,parentContext)
+    override fun setContent(parent: CompositionContext?,content: @Composable () -> Unit) {
+        layout.setContent(parentContext,content)
     }
 
     override fun onAbandoned() {
