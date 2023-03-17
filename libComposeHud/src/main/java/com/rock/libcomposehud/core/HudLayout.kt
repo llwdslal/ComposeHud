@@ -18,9 +18,6 @@ import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import java.util.UUID
 
-private const val TAG = "HudLayout"
-
-
 interface HudLayout {
     val composeViewWindowToken: IBinder
     val isShowing: State<Boolean>
@@ -112,11 +109,11 @@ internal class HudLayoutImpl(
         if (_showing.value) {
             windowManager.removeViewImmediate(this)
         }
-        Log.e(TAG, "dispose: $composeViewWindowToken")
     }
 
     override fun resetLayoutParams() {
         windowParams = createLayoutParams()
+        updateWindowParams()
     }
 
     private fun createLayoutParams(): WindowManager.LayoutParams {
@@ -138,15 +135,24 @@ internal class HudLayoutImpl(
         } else {
             windowParams.flags and (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv())
         }
+        updateWindowParams()
     }
 
     override fun setLayoutGravity(@GravityInt gravity: Int) {
         windowParams.gravity = gravity
+        updateWindowParams()
     }
 
     override fun setLayoutOffset(offset: IntOffset) {
         windowParams.x = offset.x
         windowParams.y = offset.y
+        updateWindowParams()
+    }
+
+    private fun updateWindowParams(){
+        if(isAttachedToWindow){
+            windowManager.updateViewLayout(this,windowParams)
+        }
     }
 
 }

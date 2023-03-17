@@ -34,7 +34,7 @@ fun App(){
 
     Scaffold(
         topBar = { AppTopBar() },
-        bottomBar = { },
+        bottomBar = { AppBottomBar() },
         floatingActionButton = {
             Column {
                 TestButton(text = "ShowLoading") {
@@ -47,6 +47,7 @@ fun App(){
                     appState.dispatchAction(AppAction.ToastMessage("ToastMessage"))
                 }
             }
+
         }
     ) { TestList(it) }
 }
